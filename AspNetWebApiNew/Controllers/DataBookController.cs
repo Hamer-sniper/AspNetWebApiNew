@@ -14,7 +14,7 @@ namespace AspNetWebApiNew.Controllers
         }
 
         [HttpGet]
-        //[AllowAnonymous]
+        [AllowAnonymous]
         public IActionResult Index()
         {
             ViewBag.DataBook = dataBookData.GetAllDatabooks();

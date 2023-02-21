@@ -1,9 +1,12 @@
 ﻿using AspNetWebApiNew.Authentification;
 using AspNetWebApiNew.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.IdentityModel.Tokens;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -29,14 +32,30 @@ namespace AspNetWebApiNew.Controllers
 
         [HttpGet]
         [Route("api/Token/{username}/{password}")]
-        public async Task<IActionResult> Get(string username, string password)
+        public async Task<IActionResult> Login(string username, string password)
         {
-            var loginResult = await _login.LoginResultIsSucceed(username, password);            
+            var loginResult = await _login.LoginResultIsSucceed(username, password);
 
             if (loginResult)
             {
                 var roleResult = await _login.RoleChecker(username);
                 return new ObjectResult(GenerateToken(username, roleResult));
+            }
+            else
+                return BadRequest();
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        [Route("api/Register/{username}/{password}")]
+        public async Task<IActionResult> Register(string username, string password)
+        {
+            var user = new User { UserName = username };
+            var createResult = await _userManager.CreateAsync(user, password);
+
+            if (createResult.Succeeded)
+            {
+                return new ObjectResult(GenerateToken(username, new List<string>()));
             }
             else
                 return BadRequest();

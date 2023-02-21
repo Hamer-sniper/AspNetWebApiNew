@@ -50,7 +50,7 @@ namespace AspNetWebApiNew.Controllers
 
         // DELETE api/MyApi/5
         [HttpDelete("{id}")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public void Delete(int id)
         {
             dataBookData.DeleteDataBookById(id);

@@ -33,7 +33,7 @@ namespace AspNetWebApiNew.Controllers
             });
         }
 
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost]
         public async Task<IActionResult> Login(UserLogin model)
         {
             if (ModelState.IsValid)
