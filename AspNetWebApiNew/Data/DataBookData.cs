@@ -1,20 +1,17 @@
-﻿using AspNetWebApiNew.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using AspNetWebApiNew.Models;
 using AspNetWebApiNew.DataContext;
 using AspNetWebApiNew.Interfaces;
-using Newtonsoft.Json;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AspNetWebApiNew.Controllers
 {
-    public class DataBookDataApi : IDataBookData
+    public class DataBookData : IDataBookData
     {
-        string baseUrl = @"https://localhost:7065/api/MyApi/";
-        private HttpClient httpClient { get; set; }
+        private readonly DataBookContext dBContext;
 
-        public DataBookDataApi(DataBookContext dB)
+        public DataBookData(DataBookContext dB)
         {
-            httpClient = new HttpClient();
+            dBContext = dB;
         }
 
         /// <summary>
@@ -23,11 +20,7 @@ namespace AspNetWebApiNew.Controllers
         /// <returns></returns>
         public List<DataBook> GetAllDatabooks()
         {
-            string url = baseUrl;
-
-            string json = httpClient.GetStringAsync(url).Result;
-
-            return JsonConvert.DeserializeObject<List<DataBook>>(json);
+            return dBContext.DataBook.ToList();
         }
 
         /// <summary>
@@ -36,13 +29,8 @@ namespace AspNetWebApiNew.Controllers
         /// <param name="dataBook">Запись</param>
         public void CreateDataBook(DataBook dataBook)
         {
-            string url = baseUrl;
-
-            var r = httpClient.PostAsync(
-                requestUri: url,
-                content: new StringContent(JsonConvert.SerializeObject(dataBook), Encoding.UTF8,
-                mediaType: "application/json")
-                ).Result;
+            dBContext.DataBook.Add(dataBook);
+            dBContext.SaveChanges();
         }
 
         /// <summary>
@@ -52,11 +40,7 @@ namespace AspNetWebApiNew.Controllers
         /// <returns>Запись</returns>
         public DataBook ReadDataBook(int dataBookId)
         {
-            string url = baseUrl + dataBookId;
-
-            string json = httpClient.GetStringAsync(url).Result;
-
-            return JsonConvert.DeserializeObject<DataBook>(json);
+            return dBContext.DataBook.FirstOrDefault(d => d.Id == dataBookId);
         }
 
         /// <summary>
@@ -65,7 +49,8 @@ namespace AspNetWebApiNew.Controllers
         /// <param name="dataBook">Запись</param>
         public void UpdateDataBook(DataBook dataBook)
         {
-            UpdateDataBookById(dataBook.Id, dataBook);
+            dBContext.Entry(dataBook).State = EntityState.Modified;
+            dBContext.SaveChanges();
         }
 
         /// <summary>
@@ -75,17 +60,17 @@ namespace AspNetWebApiNew.Controllers
         /// <param name="dataBook">Запись</param>
         public void UpdateDataBookById(int dataBookId, DataBook dataBook)
         {
-            string url = baseUrl + dataBookId;
-
             var dataBookToModify = ReadDataBook(dataBookId);
 
             if (dataBookToModify != null)
             {
-                var r = httpClient.PutAsync(
-                    requestUri: url,
-                    content: new StringContent(JsonConvert.SerializeObject(dataBook), Encoding.UTF8,
-                    mediaType: "application/json")
-                    ).Result;
+                dataBookToModify.Surname = dataBook.Surname;                
+                dataBookToModify.Name = dataBook.Name;
+                dataBookToModify.MiddleName = dataBook.MiddleName;
+                dataBookToModify.TelephoneNumber = dataBook.TelephoneNumber;
+                dataBookToModify.Adress = dataBook.Adress;
+                dataBookToModify.Note = dataBook.Note;
+                dBContext.SaveChanges();
             }
         }
 
@@ -95,7 +80,8 @@ namespace AspNetWebApiNew.Controllers
         /// <param name="dataBook">Запись</param>
         public void DeleteDataBook(DataBook dataBook)
         {
-            DeleteDataBookById(dataBook.Id);
+            dBContext.DataBook.Remove(dataBook);
+            dBContext.SaveChanges();
         }
 
         /// <summary>
@@ -104,13 +90,12 @@ namespace AspNetWebApiNew.Controllers
         /// <param name="dataBookId">Id записи</param>
         public void DeleteDataBookById(int dataBookId)
         {
-            string url = baseUrl + dataBookId;
-
             var dataBookToDelete = ReadDataBook(dataBookId);
 
             if (dataBookToDelete != null)
             {
-                var r = httpClient.DeleteAsync(requestUri: url).Result;
+                dBContext.DataBook.Remove(dataBookToDelete);
+                dBContext.SaveChanges();
             }
         }
     }

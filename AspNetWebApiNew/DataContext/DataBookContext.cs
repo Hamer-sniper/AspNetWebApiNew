@@ -7,6 +7,7 @@ namespace AspNetWebApiNew.DataContext
 {
     public class DataBookContext : IdentityDbContext<User>
     {
+        public DbSet<DataBook> DataBook { get; set; }
         public DataBookContext(DbContextOptions options) : base(options) { }
     }
 }
