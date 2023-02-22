@@ -26,7 +26,8 @@ namespace AspNetWebApiNew.Controllers
 
         // GET api/MyApi/1
         [HttpGet("{id}")]
-        public IDataBook GetCarById(int id)
+        [Authorize]
+        public IDataBook GetDataBookById(int id)
         {
             return dataBookData.ReadDataBook(id);
         }
