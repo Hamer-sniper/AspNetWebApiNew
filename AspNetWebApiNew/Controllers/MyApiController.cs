@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace AspNetWebApiNew.Controllers
 {
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
     public class MyApiController : ControllerBase
@@ -19,6 +19,7 @@ namespace AspNetWebApiNew.Controllers
 
         // GET api/MyApi
         [HttpGet]
+        [AllowAnonymous]
         public IEnumerable<IDataBook> Get()
         {
             return dataBookData.GetAllDatabooks();

@@ -2,6 +2,7 @@ using AspNetWebApiNew.Authentification;
 using AspNetWebApiNew.Controllers;
 using AspNetWebApiNew.DataContext;
 using AspNetWebApiNew.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -28,10 +29,14 @@ public class Program
 
         builder.Services.AddAuthentication(options =>
         {
-            options.DefaultAuthenticateScheme = "JwtBearer";
-            options.DefaultChallengeScheme = "JwtBearer";
+            //options.DefaultAuthenticateScheme = "JwtBearer";
+            //options.DefaultChallengeScheme = "JwtBearer";
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
         })
-               .AddJwtBearer("JwtBearer", jwtOptions =>
+            .AddCookie(cfg => cfg.SlidingExpiration = true)
+               .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwtOptions =>
                {
                    jwtOptions.TokenValidationParameters = new TokenValidationParameters()
                    {

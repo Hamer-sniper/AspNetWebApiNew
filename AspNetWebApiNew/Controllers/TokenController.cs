@@ -70,6 +70,12 @@ namespace AspNetWebApiNew.Controllers
             foreach (var role in roles)
                 claimsToToken.Add(new Claim(ClaimTypes.Role, role));
 
+            // создаем объект ClaimsIdentity
+            //ClaimsIdentity id = new ClaimsIdentity(claimsToToken, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+
+            // установка аутентификационных куки
+            //await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
+
             var token = new JwtSecurityToken(
                 claims: claimsToToken,
                 notBefore: new DateTimeOffset(DateTime.Now).DateTime,
