@@ -17,9 +17,16 @@ namespace AspNetWebApiNew.Controllers
             _roleManager = roleManager;
             _userManager = userManager;
         }
-        public IActionResult Index() => View(_roleManager.Roles.ToList());
+        public IActionResult Index()
+        {
+            return View(_roleManager.Roles.ToList());
+        }
 
-        public IActionResult Create() => View();
+        public IActionResult Create()
+        {
+           return View();
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create(string name)
         {

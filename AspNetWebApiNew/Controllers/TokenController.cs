@@ -17,13 +17,15 @@ namespace AspNetWebApiNew.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        private readonly ILogin _login;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IAccount _account;
 
-        public TokenController(UserManager<User> userManager, SignInManager<User> signInManager, ILogin login)
+        public TokenController(UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole> roleManager, IAccount account)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _login = login;
+            _roleManager = roleManager;
+            _account = account;
         }
 
         private const string SECRET_KEY = "TQvgjeABMPOwCycOqah5EQu5yyVjpmVG";
@@ -34,11 +36,11 @@ namespace AspNetWebApiNew.Controllers
         [Route("api/Token/{username}/{password}")]
         public async Task<IActionResult> Login(string username, string password)
         {
-            var loginResult = await _login.LoginResultIsSucceed(username, password);
+            var loginResult = await _account.LoginResultIsSucceed(username, password);
 
             if (loginResult)
             {
-                var roleResult = await _login.RoleChecker(username);
+                var roleResult = await _account.RoleChecker(username);
                 return new ObjectResult(GenerateToken(username, roleResult));
             }
             else
@@ -61,20 +63,12 @@ namespace AspNetWebApiNew.Controllers
                 return BadRequest();
         }
 
-        // Generate a Token with expiration date and Claim meta-data.
-        // And sign the token with the SIGNING_KEY
         private string GenerateToken(string username, IEnumerable<string> roles)
         {
             List<Claim> claimsToToken = new List<Claim> { new Claim(ClaimTypes.Name, username) };
 
             foreach (var role in roles)
                 claimsToToken.Add(new Claim(ClaimTypes.Role, role));
-
-            // создаем объект ClaimsIdentity
-            //ClaimsIdentity id = new ClaimsIdentity(claimsToToken, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
-
-            // установка аутентификационных куки
-            //await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
 
             var token = new JwtSecurityToken(
                 claims: claimsToToken,

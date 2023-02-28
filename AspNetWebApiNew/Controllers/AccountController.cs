@@ -13,9 +13,9 @@ namespace AspNetWebApiNew.Controllers
 
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        private readonly ILogin _login;
+        private readonly IAccount _login;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, ILogin login)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IAccount login)
         {
             _userManager = userManager;
             _signInManager = signInManager;

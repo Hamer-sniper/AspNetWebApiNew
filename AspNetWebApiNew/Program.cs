@@ -21,7 +21,7 @@ public class Program
           opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
         builder.Services.AddTransient<IDataBookData, DataBookData>();
-        builder.Services.AddTransient<ILogin, Account>();
+        builder.Services.AddTransient<IAccount, Account>();
 
         builder.Services.AddIdentity<User, IdentityRole>()
             .AddEntityFrameworkStores<DataBookContext>()
@@ -29,8 +29,6 @@ public class Program
 
         builder.Services.AddAuthentication(options =>
         {
-            //options.DefaultAuthenticateScheme = "JwtBearer";
-            //options.DefaultChallengeScheme = "JwtBearer";
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;

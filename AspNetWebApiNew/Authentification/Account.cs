@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace AspNetWebApiNew.Authentification
 {
-    public class Account : ILogin
+    public class Account : IAccount
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
